@@ -1,4 +1,4 @@
-import { Option } from 'commander'
+#!/usr/bin/env node
 import { program } from 'commander'
 import { list } from './commands/list'
 import { createTemplate } from './commands/new'

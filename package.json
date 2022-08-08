@@ -12,12 +12,14 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "commander": "^9.4.0",
-        "inquirer": "^9.1.0"
+        "commander": "^9.4.0"
     },
     "devDependencies": {
         "@types/inquirer": "^9.0.0",
         "esbuild": "^0.14.53",
         "esbuild-plugin-copy": "^1.3.0"
+    },
+    "bin": {
+        "ts-new": "./dist/index.js"
     }
 }
