@@ -1834,16 +1834,35 @@ var createTemplate = (template, options) => {
   const filepaths = templateConfig.entries.map((p) => import_path2.default.resolve(templatePath, p));
   for (const p of filepaths) {
     const isDir = import_fs3.default.lstatSync(p).isDirectory();
-    const filename = p.split("/").at(-1);
     if (isDir) {
-      import_fs3.default.copyFileSync(p, destination);
+      for (const filename of import_fs3.default.readdirSync(p)) {
+        copy(import_path2.default.resolve(p, filename), destination);
+      }
     } else {
-      if (import_fs3.default.existsSync(destination) && import_fs3.default.lstatSync(destination).isDirectory()) {
-        import_fs3.default.copyFileSync(p, import_path2.default.resolve(destination, filename));
-      } else {
-        import_fs3.default.copyFileSync(p, import_path2.default.resolve(destination));
+      copy(p, destination);
+    }
+  }
+};
+var getFilename = (path3) => {
+  return path3.split("/").at(-1);
+};
+var copy = (from, to) => {
+  if (import_fs3.default.lstatSync(from).isDirectory()) {
+    const dirName = getFilename(from);
+    if (dirName) {
+      const dirPath = import_path2.default.resolve(to, dirName);
+      if (!import_fs3.default.existsSync(dirPath))
+        import_fs3.default.mkdirSync(dirPath, { recursive: true });
+      for (const file of import_fs3.default.readdirSync(from)) {
+        console.log(`Copying ${import_path2.default.resolve(from, file)} to ${import_path2.default.resolve(dirPath, file)}`);
+        copy(import_path2.default.resolve(from, file), import_path2.default.resolve(dirPath, file));
       }
     }
+  } else {
+    if (import_fs3.default.existsSync(to) && import_fs3.default.lstatSync(to).isDirectory())
+      import_fs3.default.copyFileSync(from, import_path2.default.resolve(to, getFilename(from)));
+    else
+      import_fs3.default.copyFileSync(from, to);
   }
 };
 

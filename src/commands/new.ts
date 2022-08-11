@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { TEMPLATE_CONFIG_FILE, TEMPLATE_DIR } from '../constants'
 import { templates } from '../templates'
+import { copy } from '../utils/copy'
 
 export const createTemplate = (template: string, options) => {
     let destination = options.name ?? process.cwd()
@@ -22,16 +23,13 @@ export const createTemplate = (template: string, options) => {
 
     for (const p of filepaths) {
         const isDir = fs.lstatSync(p).isDirectory()
-        const filename = p.split('/').at(-1) as string
 
         if (isDir) {
-            fs.copyFileSync(p, destination)
-        } else {
-            if (fs.existsSync(destination) && fs.lstatSync(destination).isDirectory()) {
-                fs.copyFileSync(p, path.resolve(destination, filename))
-            } else {
-                fs.copyFileSync(p, path.resolve(destination))
+            for (const filename of fs.readdirSync(p)) {
+                copy(path.resolve(p, filename), destination)
             }
+        } else {
+            copy(p, destination)
         }
     }
 }
